@@ -12,12 +12,18 @@ jobs:
 
       - name: Install cross-compiler and deps
         run: |
+          sudo dpkg --add-architecture arm64
+          sudo sed -i 's/^deb /deb [arch=amd64] /' /etc/apt/sources.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
           sudo apt-get update
           sudo apt-get install -y \
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-            cmake make libsdl2-dev libfreeimage-dev libfreetype6-dev \
-            libcurl4-openssl-dev libasound2-dev libgl1-mesa-dev \
-            build-essential libboost-all-dev rapidjson-dev
+            cmake make build-essential \
+            libsdl2-dev:arm64 libfreeimage-dev:arm64 libfreetype6-dev:arm64 \
+            libcurl4-openssl-dev:arm64 libasound2-dev:arm64 \
+            libgl1-mesa-dev:arm64 libgles2-mesa-dev:arm64 \
+            libboost-all-dev:arm64 rapidjson-dev
 
       - name: Build
         run: |
@@ -27,6 +33,9 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_SYSTEM_NAME=Linux \
             -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
+            -DCMAKE_FIND_ROOT_PATH=/usr/aarch64-linux-gnu \
+            -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+            -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
             .
           make -j$(nproc) emulationstation
 
