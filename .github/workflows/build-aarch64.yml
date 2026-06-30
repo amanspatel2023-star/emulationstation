@@ -13,16 +13,16 @@ jobs:
       - name: Install cross-compiler and deps
         run: |
           sudo dpkg --add-architecture arm64
-          sudo sed -i 's/^deb /deb [arch=amd64] /' /etc/apt/sources.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-          sudo apt-get update
+          sudo sed -i 's/^deb \[arch=amd64\] /deb [arch=amd64] /' /etc/apt/sources.list.d/ubuntu.sources || true
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/arm64-ports.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/arm64-ports.list
+          sudo apt-get update || true
           sudo apt-get install -y \
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
             cmake make build-essential \
             libsdl2-dev:arm64 libfreeimage-dev:arm64 libfreetype6-dev:arm64 \
             libcurl4-openssl-dev:arm64 libasound2-dev:arm64 \
-            libgl1-mesa-dev:arm64 libgles2-mesa-dev:arm64 \
+            libgl-dev:arm64 libgles2-mesa-dev:arm64 \
             libboost-all-dev:arm64 rapidjson-dev
 
       - name: Build
