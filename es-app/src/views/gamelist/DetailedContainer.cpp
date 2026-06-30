@@ -550,10 +550,16 @@ void DetailedContainer::updateDetailsForFolder(FolderData* folder)
 			mVideo->setImage(":/blank.png");
 			mVideo->setVideo("");
 
-			createFolderGrid(mVideo->getTargetSize(), thumbs);
-			if (mFolderView)
-				mVideo->addChild(mFolderView);
+			std::string folderImg = folder->getImagePath();
+			if (!folderImg.empty() && Utils::FileSystem::exists(folderImg))
+				mVideo->setImage(folderImg);
 			else
+			{
+				createFolderGrid(mVideo->getTargetSize(), thumbs);
+				if (mFolderView)
+					mVideo->addChild(mFolderView);
+			}
+			if (false)
 			{
 				std::string snapShot = imagePath;
 
@@ -594,11 +600,16 @@ void DetailedContainer::updateDetailsForFolder(FolderData* folder)
 		{
 			if (mVideo == nullptr || !mVideo->showSnapshots())
 			{
-				mImage->setImage(":/blank.png");
-
-				createFolderGrid(mImage->getSize(), thumbs);
-				if (mFolderView)
-					mImage->addChild(mFolderView);
+				std::string folderImg2 = folder->getImagePath();
+				if (!folderImg2.empty() && Utils::FileSystem::exists(folderImg2))
+					mImage->setImage(folderImg2, false, mImage->getMaxSizeInfo());
+				else
+				{
+					mImage->setImage(":/blank.png");
+					createFolderGrid(mImage->getSize(), thumbs);
+					if (mFolderView)
+						mImage->addChild(mFolderView);
+				}
 			}
 			else
 			{
